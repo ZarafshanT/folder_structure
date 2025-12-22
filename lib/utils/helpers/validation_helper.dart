@@ -8,6 +8,7 @@ class FormValidator {
 
   static String? validatePassword(String? value) {
     if (value == null || value.length < 6) {
+      return "Minimum 6 characters required";
     }
     return null;
   }
