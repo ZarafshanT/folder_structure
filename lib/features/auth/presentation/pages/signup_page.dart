@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../utils/constants/colors/colors.dart';
 import '../controllers/auth_controller.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 
@@ -14,13 +15,20 @@ class SignUpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Theme data is centralized. 
+    final theme = Theme.of(context);
+
     return Scaffold(
+      // Background color is handled by theme
       appBar: AppBar(
-        title: const Text('Sign Up'),
+        title: Text(
+          'Sign Up',
+          style: theme.textTheme.titleLarge,
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
           onPressed: () => Get.back(),
         ),
       ),
@@ -34,19 +42,15 @@ class SignUpPage extends StatelessWidget {
               children: [
                 Text(
                   'Create Account',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                  style: theme.textTheme.headlineMedium,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Sign up to get started',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.textTheme.bodyLarge?.color?.withOpacity(0.7),
+                  ),
                 ),
-                const SizedBox(height: 32),
                 const SizedBox(height: 32),
                 CustomTextField(
                   controller: emailController,
@@ -113,22 +117,10 @@ class SignUpPage extends StatelessWidget {
                                   );
                                 }
                               },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
+                        // Style handled by Theme
                         child: controller.isLoading.value
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text(
-                                'Sign Up',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
+                            ? const CircularProgressIndicator(color: AppColors.white)
+                            : const Text('Sign Up'),
                       ),
                     )),
               ],

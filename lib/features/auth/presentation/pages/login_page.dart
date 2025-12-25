@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../utils/constants/colors/colors.dart';
 import '../controllers/auth_controller.dart';
 import '../../../../app/routes/app_routes.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../app/theme/theme_controller.dart';
+import '../widgets/social_button.dart';
 
 class LoginPage extends StatelessWidget {
   final AuthController controller = Get.find<AuthController>();
+  // Simple dependency injection for ThemeController. 
+  // In a real app, bind this in InitialBindings or AuthBindings.
+  final ThemeController themeController = Get.put(ThemeController()); 
+  
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -13,7 +20,29 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Theme data is now fully centrally managed. 
+    // We just access it to ensure specific text styles match our hierarchy.
+    final theme = Theme.of(context);
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () => themeController.toggleTheme(),
+            icon: Icon(
+              // We need to use Obx or GetBuilder if we want the icon to change *instantly* 
+              // if Get.isDarkMode wasn't reactive enough (it is usually updated with theme change).
+              // However, since Get.changeThemeMode rebuilds the tree, the build method runs again
+              // and checks themeController logic.
+               Get.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+               color: theme.colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+      // Background color is handled by theme automatically
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -23,19 +52,18 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                   // ... existing children ...
+                   // Since I have to replace the whole file content to be safe with tool limitations, I will copy the children logic.
                   Text(
                     'Welcome Back',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                    style: theme.textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Sign in to your account',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.grey[600],
-                        ),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.textTheme.bodyLarge?.color?.withOpacity(0.7),
+                    ),
                   ),
                   const SizedBox(height: 32),
                   CustomTextField(
@@ -66,22 +94,10 @@ class LoginPage extends StatelessWidget {
                                     passwordController.text,
                                   );
                                 },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
+                          // Style is now handled globally by ElevatedButtonTheme
                           child: controller.isLoading.value
-                              ? const CircularProgressIndicator(color: Colors.white)
-                              : const Text(
-                                  'Login',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                              ? const CircularProgressIndicator(color: AppColors.white)
+                              : const Text('Login'),
                         ),
                       )),
                   const SizedBox(height: 16),
@@ -92,36 +108,40 @@ class LoginPage extends StatelessWidget {
                         Get.toNamed(AppRoutes.signup);
                       },
                       child: const Text("Don't have an account? Sign Up"),
+                      // Style is now handled by TextButtonTheme
                     ),
                   ),
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      const Expanded(child: Divider()),
+                      Expanded(child: Divider(color: theme.colorScheme.outlineVariant)),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text('OR', style: TextStyle(color: Colors.grey[500])),
+                        child: Text(
+                          'OR',
+                          style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                        ),
                       ),
-                      const Expanded(child: Divider()),
+                      Expanded(child: Divider(color: theme.colorScheme.outlineVariant)),
                     ],
                   ),
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _SocialButton(
-                        icon: Icons.g_mobiledata, // Placeholder for Google Logo
+                      SocialButton(
+                        icon: Icons.g_mobiledata, // Placeholder
                         label: 'Google',
                         onTap: () => controller.loginWithGoogle(),
-                        color: Colors.red.shade50,
-                        textColor: Colors.red,
+                        color: AppColors.lightContainer, // Or brand color background
+                        textColor: AppColors.google, // Brand color text
                       ),
-                      _SocialButton(
+                      SocialButton(
                         icon: Icons.facebook,
                         label: 'Facebook',
                         onTap: () => controller.loginWithFacebook(),
-                        color: Colors.blue.shade50,
-                        textColor: Colors.blue,
+                        color: AppColors.lightContainer,
+                        textColor: AppColors.facebook,
                       ),
                     ],
                   ),
@@ -129,50 +149,6 @@ class LoginPage extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SocialButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final Color color;
-  final Color textColor;
-
-  const _SocialButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    required this.color,
-    required this.textColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: textColor),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-          ],
         ),
       ),
     );

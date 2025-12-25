@@ -7,6 +7,7 @@ import 'custom_theme_components/elevated_button_theme.dart';
 import 'custom_theme_components/outlined_button_theme.dart';
 import 'custom_theme_components/text_theme.dart';
 import 'custom_theme_components/textformfield_theme.dart';
+import 'custom_theme_components/text_button_theme.dart';
 
 // class TAppTheme {
 //   TAppTheme._();
@@ -61,6 +62,7 @@ class TAppTheme {
     elevatedButtonTheme: TElevatedButtonTheme.lightElevatedButtonTheme,
     outlinedButtonTheme: TOutlinedButtonTheme.lightOutlinedButtonTheme,
     inputDecorationTheme: TTextFormFieldTheme.lightInputDecorationTheme,
+    textButtonTheme: TTextButtonTheme.lightTextButtonTheme,
   );
 
   /// Dark Theme
@@ -77,5 +79,6 @@ class TAppTheme {
     elevatedButtonTheme: TElevatedButtonTheme.darkElevatedButtonTheme,
     outlinedButtonTheme: TOutlinedButtonTheme.darkOutlinedButtonTheme,
     inputDecorationTheme: TTextFormFieldTheme.darkInputDecorationTheme,
+    textButtonTheme: TTextButtonTheme.darkTextButtonTheme,
   );
 }
