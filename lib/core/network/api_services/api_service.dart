@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:folder_structure/core/errors/error_message.dart';
 // import 'package:folder_structure/core/errors/exceptions.dart'; -> agr error exception class b use krni ho to nechy comment wala code hai
 import 'package:folder_structure/core/errors/failure.dart';
-import 'package:folder_structure/core/network/dio_client/dio__client.dart';
+import 'package:folder_structure/core/network/dio_client/dio_client.dart';
 import 'ia_api_service.dart';
 
 class BaseApiService implements IApiService {

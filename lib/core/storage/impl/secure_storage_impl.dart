@@ -1,9 +1,10 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:folder_structure/core/storage/secure_storage_service.dart';
+import 'package:folder_structure/core/storage/secure_storage.dart';
 
-class SecureStorageServiceImpl implements SecureStorageService {
+class SecureStorageImpl implements SecureStorage {
   final FlutterSecureStorage _storage;
-  SecureStorageServiceImpl(this._storage);
+
+  SecureStorageImpl(this._storage);
 
   @override
   Future<void> delete(String key) => _storage.delete(key: key);
