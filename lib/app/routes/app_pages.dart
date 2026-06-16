@@ -1,4 +1,5 @@
 import 'package:folder_structure/app/routes/app_routes.dart';
+import 'package:folder_structure/features/settings/presentation/bindings/permission_binding.dart';
 import 'package:folder_structure/features/settings/presentation/pages/permission_page.dart';
 import 'package:folder_structure/features/home/presentation/pages/home_page.dart';
 import 'package:folder_structure/features/splash/presentation/pages/splash_page.dart';
@@ -14,11 +15,12 @@ class AppPages {
       page: () => HomePage(),
       binding: AuthBinding(), // Keep Auth binding alive
     ),
-    GetPage(name: AppRoutes.permissions, page: () => PermissionsPage()),
     GetPage(
-      name: AppRoutes.splash,
-      page: () => const SplashPage(),
+      name: AppRoutes.permissions,
+      page: () => PermissionsPage(),
+      binding: PermissionBinding(),
     ),
+    GetPage(name: AppRoutes.splash, page: () => const SplashPage()),
     GetPage(
       name: AppRoutes.login,
       page: () => LoginPage(),

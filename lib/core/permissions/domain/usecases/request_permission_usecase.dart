@@ -1,3 +1,5 @@
+import 'package:dartz/dartz.dart';
+import 'package:folder_structure/core/errors/failure.dart';
 import 'package:folder_structure/core/permissions/domain/entities/permissions_status_enum.dart';
 import 'package:folder_structure/core/permissions/domain/repositories/permission_repository.dart';
 import 'package:folder_structure/core/permissions/permission_type.dart';
@@ -7,7 +9,7 @@ class RequestPermissionUseCase {
 
   RequestPermissionUseCase(this.repository);
 
-  Future<PermissionStatusEntity> call(AppPermissionType type) {
+  Future<Either<Failure, PermissionStatusEntity>> call(AppPermissionType type) {
     return repository.requestPermission(type);
   }
 }

@@ -1,2 +1,2 @@
 // core/permissions/permission_type.dart
-enum AppPermissionType { location, camera, storage, notifications }
+enum AppPermissionType { location, camera, storage, notifications, microphone }

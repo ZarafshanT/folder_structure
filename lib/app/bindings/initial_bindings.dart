@@ -4,10 +4,11 @@ import 'package:folder_structure/core/network/network_info/network_info_impl.dar
 import 'package:folder_structure/core/network/api_services/api_service.dart';
 import 'package:folder_structure/core/network/api_services/ia_api_service.dart';
 import 'package:folder_structure/core/network/dio_client/dio_client.dart';
+import 'package:folder_structure/core/permissions/data/datasources/permission_remote_datasource.dart';
 import 'package:folder_structure/core/permissions/data/repositories/permission_repository_impl.dart';
 import 'package:folder_structure/core/permissions/domain/repositories/permission_repository.dart';
-import 'package:folder_structure/core/permissions/domain/usecase/check_permission_use_case.dart';
-import 'package:folder_structure/core/permissions/domain/usecase/request_permission_usecase.dart';
+import 'package:folder_structure/core/permissions/domain/usecases/check_permission_use_case.dart';
+import 'package:folder_structure/core/permissions/domain/usecases/request_permission_usecase.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:folder_structure/core/storage/secure_storage.dart';
 import 'package:folder_structure/core/storage/impl/secure_storage_impl.dart';
@@ -40,7 +41,10 @@ class InitialBindings extends Bindings {
     // Register permission services
 
     // Permissions
-    Get.lazyPut<PermissionRepository>(() => PermissionRepositoryImpl());
+    Get.lazyPut<PermissionRemoteDataSource>(() => PermissionRemoteDataSourceImpl());
+    Get.lazyPut<PermissionRepository>(
+      () => PermissionRepositoryImpl(Get.find<PermissionRemoteDataSource>()),
+    );
     Get.lazyPut(
       () => RequestPermissionUseCase(Get.find<PermissionRepository>()),
     );
