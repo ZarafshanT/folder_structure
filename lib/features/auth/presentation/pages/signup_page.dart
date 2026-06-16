@@ -8,23 +8,21 @@ class SignUpPage extends StatelessWidget {
   final AuthController controller = Get.find<AuthController>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   SignUpPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Theme data is centralized. 
+    // Theme data is centralized.
     final theme = Theme.of(context);
 
     return Scaffold(
       // Background color is handled by theme
       appBar: AppBar(
-        title: Text(
-          'Sign Up',
-          style: theme.textTheme.titleLarge,
-        ),
+        title: Text('Sign Up', style: theme.textTheme.titleLarge),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -40,10 +38,7 @@ class SignUpPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Create Account',
-                  style: theme.textTheme.headlineMedium,
-                ),
+                Text('Create Account', style: theme.textTheme.headlineMedium),
                 const SizedBox(height: 8),
                 Text(
                   'Sign up to get started',
@@ -103,26 +98,46 @@ class SignUpPage extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 24),
-                Obx(() => SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: controller.isLoading.value
-                            ? null
-                            : () {
-                                if (_formKey.currentState!.validate()) {
-                                  controller.register(
-                                    emailController.text,
-                                    passwordController.text,
-                                  );
-                                }
-                              },
-                        // Style handled by Theme
-                        child: controller.isLoading.value
-                            ? const CircularProgressIndicator(color: AppColors.white)
-                            : const Text('Sign Up'),
+                Obx(
+                  () => controller.errorMessage.value.isEmpty
+                      ? const SizedBox.shrink()
+                      : Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: Text(
+                            controller.errorMessage.value,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.error,
+                            ),
+                          ),
+                        ),
+                ),
+                Obx(
+                  () => SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: controller.isLoading.value
+                          ? null
+                          : () {
+                              if (_formKey.currentState!.validate()) {
+                                controller.register(
+                                  emailController.text.trim(),
+                                  passwordController.text,
+                                );
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
                       ),
-                    )),
+                      // Style handled by Theme
+                      child: controller.isLoading.value
+                          ? const CircularProgressIndicator(
+                              color: AppColors.white,
+                            )
+                          : const Text('Sign Up', textAlign: TextAlign.center),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

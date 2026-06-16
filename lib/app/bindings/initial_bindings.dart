@@ -23,8 +23,12 @@ class InitialBindings extends Bindings {
   void dependencies() {
     // Inject Storage Services
     Get.lazyPut<FlutterSecureStorage>(() => const FlutterSecureStorage());
-    Get.lazyPut<SecureStorage>(() => SecureStorageImpl(Get.find<FlutterSecureStorage>()));
-    Get.lazyPut<TokenStorage>(() => SecureTokenStorageImpl(Get.find<SecureStorage>()));
+    Get.lazyPut<SecureStorage>(
+      () => SecureStorageImpl(Get.find<FlutterSecureStorage>()),
+    );
+    Get.lazyPut<TokenStorage>(
+      () => SecureTokenStorageImpl(Get.find<SecureStorage>()),
+    );
 
     // Inject Dio instance with interceptors (DioClient will retrieve TokenStorage via Get.find)
     Get.lazyPut<Dio>(() => DioClient().dioInstance);
@@ -33,15 +37,12 @@ class InitialBindings extends Bindings {
     // Core service
     Get.lazyPut<IApiService>(() => BaseApiService());
 
-    // Feature service
-    // Get.lazyPut<AuthApiService>(
-    //   () => AuthApiService(api: Get.find<IApiService>()),
-    // );
-
     // Register permission services
 
     // Permissions
-    Get.lazyPut<PermissionRemoteDataSource>(() => PermissionRemoteDataSourceImpl());
+    Get.lazyPut<PermissionRemoteDataSource>(
+      () => PermissionRemoteDataSourceImpl(),
+    );
     Get.lazyPut<PermissionRepository>(
       () => PermissionRepositoryImpl(Get.find<PermissionRemoteDataSource>()),
     );
@@ -51,7 +52,7 @@ class InitialBindings extends Bindings {
     Get.lazyPut(() => CheckPermissionUseCase(Get.find<PermissionRepository>()));
 
     // Network Info
-    Get.lazyPut<Connectivity>(() => Connectivity());
-    Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl());
+    Get.lazyPut<Connectivity>(() => Connectivity(), fenix: true);
+    Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(), fenix: true);
   }
 }

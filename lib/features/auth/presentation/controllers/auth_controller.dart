@@ -23,35 +23,61 @@ class AuthController extends GetxController {
   final RxString errorMessage = ''.obs;
 
   Future<void> login(String email, String password) async {
+    if (email.trim().isEmpty || password.isEmpty) {
+      Get.snackbar(
+        'Missing information',
+        'Please enter both email and password.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     isLoading.value = true;
     errorMessage.value = '';
-    
-    final result = await loginWithEmailUseCase(email, password);
-    
+
+    final result = await loginWithEmailUseCase(email.trim(), password);
+
     result.fold(
       (failure) {
         errorMessage.value = failure.message;
-        Get.snackbar('Error', failure.message);
+        Get.snackbar(
+          'Login failed',
+          failure.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
       },
       (user) {
         currentUser.value = user;
         Get.offAllNamed('/home'); // Navigate to home
       },
     );
-    
+
     isLoading.value = false;
   }
 
   Future<void> register(String email, String password) async {
+    if (email.trim().isEmpty || password.isEmpty) {
+      Get.snackbar(
+        'Missing information',
+        'Please enter your email and password.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     isLoading.value = true;
     errorMessage.value = '';
 
-    final result = await registerUseCase(email, password);
+    final result = await registerUseCase(email.trim(), password);
 
     result.fold(
       (failure) {
         errorMessage.value = failure.message;
-        Get.snackbar('Error', failure.message);
+        Get.snackbar(
+          'Sign up failed',
+          failure.message,
+          snackPosition: SnackPosition.BOTTOM,
+        );
       },
       (user) {
         currentUser.value = user;
@@ -65,26 +91,20 @@ class AuthController extends GetxController {
   Future<void> loginWithGoogle() async {
     isLoading.value = true;
     final result = await loginWithGoogleUseCase();
-    result.fold(
-      (failure) => Get.snackbar('Error', failure.message),
-      (user) {
-        currentUser.value = user;
-        Get.offAllNamed('/home');
-      },
-    );
+    result.fold((failure) => Get.snackbar('Error', failure.message), (user) {
+      currentUser.value = user;
+      Get.offAllNamed('/home');
+    });
     isLoading.value = false;
   }
 
   Future<void> loginWithFacebook() async {
     isLoading.value = true;
     final result = await loginWithFacebookUseCase();
-    result.fold(
-      (failure) => Get.snackbar('Error', failure.message),
-      (user) {
-        currentUser.value = user;
-        Get.offAllNamed('/home');
-      },
-    );
+    result.fold((failure) => Get.snackbar('Error', failure.message), (user) {
+      currentUser.value = user;
+      Get.offAllNamed('/home');
+    });
     isLoading.value = false;
   }
 }

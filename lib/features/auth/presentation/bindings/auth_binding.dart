@@ -10,6 +10,7 @@ import '../../domain/usecases/register_usecase.dart';
 import '../controllers/auth_controller.dart';
 import '../../../../../core/network/network_info/network_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../../core/network/network_info/network_info_impl.dart';
 
 class AuthBinding extends Bindings {
   @override
@@ -18,6 +19,11 @@ class AuthBinding extends Bindings {
     Get.lazyPut<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(firebaseAuth: FirebaseAuth.instance),
     );
+
+    // Ensure network info is available for auth repository.
+    if (!Get.isRegistered<NetworkInfo>()) {
+      Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(), fenix: true);
+    }
 
     // Repository
     Get.lazyPut<AuthRepository>(
