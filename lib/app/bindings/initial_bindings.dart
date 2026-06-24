@@ -53,6 +53,9 @@ class InitialBindings extends Bindings {
 
     // Network Info
     Get.lazyPut<Connectivity>(() => Connectivity(), fenix: true);
-    Get.lazyPut<NetworkInfo>(() => NetworkInfoImpl(), fenix: true);
+    Get.lazyPut<NetworkInfo>(
+      () => NetworkInfoImpl(connectivity: Get.find<Connectivity>()),
+      fenix: true,
+    );
   }
 }
