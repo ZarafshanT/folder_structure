@@ -33,7 +33,7 @@ class DioClient {
     dio.interceptors.addAll([
       LoggerInterceptor(), // 🔹 Logs request/response
       AuthInterceptor(dio: dio, tokenStorage: tokenStorage), // 🔹 Injects token
-      RetryInterceptor(), // 🔹 Retries failed requests
+      RetryInterceptor(dio), // 🔹 Retries failed requests
       CacheInterceptor(), // 🔹 Returns cached data if available
       HeaderInterceptor(), // 🔹 Adds app-wide headers
       ErrorHandlingInterceptor(), // 🔹 Handles errors in one place

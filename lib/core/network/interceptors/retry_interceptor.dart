@@ -1,11 +1,15 @@
 import 'package:dio/dio.dart';
 
 class RetryInterceptor extends Interceptor {
+  final Dio dio;
+
+  RetryInterceptor(this.dio);
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (_shouldRetry(err)) {
       try {
-        final response = await err.requestOptions.retry();
+        final response = await _retryRequest(err.requestOptions);
         return handler.resolve(response);
       } catch (_) {
         return handler.next(err);
@@ -18,16 +22,24 @@ class RetryInterceptor extends Interceptor {
     return err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.connectionError;
   }
-}
 
-extension RequestOptionsX on RequestOptions {
-  Future<Response<dynamic>> retry() {
-    final dio = Dio();
+  Future<Response<dynamic>> _retryRequest(RequestOptions requestOptions) {
     return dio.request(
-      path,
-      data: data,
-      queryParameters: queryParameters,
-      options: Options(method: method, headers: headers),
+      requestOptions.path,
+      data: requestOptions.data,
+      queryParameters: requestOptions.queryParameters,
+      options: Options(
+        method: requestOptions.method,
+        headers: requestOptions.headers,
+        extra: requestOptions.extra,
+        responseType: requestOptions.responseType,
+        contentType: requestOptions.contentType,
+        followRedirects: requestOptions.followRedirects,
+        validateStatus: requestOptions.validateStatus,
+        receiveDataWhenStatusError: requestOptions.receiveDataWhenStatusError,
+        sendTimeout: requestOptions.sendTimeout,
+        receiveTimeout: requestOptions.receiveTimeout,
+      ),
     );
   }
 }
