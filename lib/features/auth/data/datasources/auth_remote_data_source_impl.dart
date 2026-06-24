@@ -8,6 +8,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl({required this.firebaseAuth});
 
+  UserModel _toUserModel(User user) {
+    return UserModel(
+      id: user.uid,
+      email: user.email ?? '',
+      name: user.displayName,
+      photoUrl: user.photoURL,
+    );
+  }
+
   @override
   Future<UserModel> loginWithEmail(String email, String password) async {
     try {
@@ -15,16 +24,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
-      
-      final user = userCredential.user!;
-      return UserModel(
-        id: user.uid,
-        email: user.email ?? '',
-        name: user.displayName,
-        photoUrl: user.photoURL,
-      );
+
+      return _toUserModel(userCredential.user!);
     } on FirebaseAuthException catch (e) {
-      throw ServerException(e.message ?? "Authentication Failed");
+      throw AuthException(e.message ?? "Authentication Failed");
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -37,16 +40,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
-      
-      final user = userCredential.user!;
-      return UserModel(
-        id: user.uid,
-        email: user.email ?? '',
-        name: user.displayName,
-        photoUrl: user.photoURL,
-      );
+
+      return _toUserModel(userCredential.user!);
     } on FirebaseAuthException catch (e) {
-      throw ServerException(e.message ?? "Registration Failed");
+      throw AuthException(e.message ?? "Registration Failed");
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -55,12 +52,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> loginWithFacebook() async {
     // Implement Facebook login if needed using flutter_facebook_auth
-    throw ServerException("Facebook Login not implemented yet");
+    throw AuthException("Facebook Login not implemented yet");
   }
 
   @override
   Future<UserModel> loginWithGoogle() async {
     // Implement Google login if needed using google_sign_in
-    throw ServerException("Google Login not implemented yet");
+    throw AuthException("Google Login not implemented yet");
   }
 }
