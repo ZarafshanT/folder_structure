@@ -114,7 +114,6 @@ class SignUpPage extends StatelessWidget {
                 Obx(
                   () => SizedBox(
                     width: double.infinity,
-                    height: 50,
                     child: ElevatedButton(
                       onPressed: controller.isLoading.value
                           ? null
@@ -128,6 +127,7 @@ class SignUpPage extends StatelessWidget {
                             },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(50),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       // Style handled by Theme
                       child: controller.isLoading.value

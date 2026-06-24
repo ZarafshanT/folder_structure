@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import '../../../../app/routes/app_routes.dart';
+import '../../data/models/user_model.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecases/login_with_email_usecase.dart';
-import '../../domain/usecases/login_with_facebook_usecase.dart';
 import '../../domain/usecases/login_with_google_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 
@@ -9,18 +11,41 @@ class AuthController extends GetxController {
   final LoginWithEmailUseCase loginWithEmailUseCase;
   final RegisterUseCase registerUseCase;
   final LoginWithGoogleUseCase loginWithGoogleUseCase;
-  final LoginWithFacebookUseCase loginWithFacebookUseCase;
 
   AuthController({
     required this.loginWithEmailUseCase,
     required this.registerUseCase,
     required this.loginWithGoogleUseCase,
-    required this.loginWithFacebookUseCase,
   });
 
   final Rx<UserEntity?> currentUser = Rx<UserEntity?>(null);
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    print('AUTH_CONTROLLER: onInit called');
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      print(
+        'AUTH_CONTROLLER: authStateChanges event user=${user?.uid} email=${user?.email}',
+      );
+      if (user != null) {
+        currentUser.value = UserModel(
+          id: user.uid,
+          email: user.email ?? '',
+          name: user.displayName,
+          photoUrl: user.photoURL,
+        );
+        print(
+          'AUTH_CONTROLLER: currentUser set to ${currentUser.value?.email}',
+        );
+      } else {
+        currentUser.value = null;
+        print('AUTH_CONTROLLER: currentUser cleared');
+      }
+    });
+  }
 
   Future<void> login(String email, String password) async {
     if (email.trim().isEmpty || password.isEmpty) {
@@ -93,17 +118,7 @@ class AuthController extends GetxController {
     final result = await loginWithGoogleUseCase();
     result.fold((failure) => Get.snackbar('Error', failure.message), (user) {
       currentUser.value = user;
-      Get.offAllNamed('/home');
-    });
-    isLoading.value = false;
-  }
-
-  Future<void> loginWithFacebook() async {
-    isLoading.value = true;
-    final result = await loginWithFacebookUseCase();
-    result.fold((failure) => Get.snackbar('Error', failure.message), (user) {
-      currentUser.value = user;
-      Get.offAllNamed('/home');
+      Get.offAllNamed(AppRoutes.home);
     });
     isLoading.value = false;
   }

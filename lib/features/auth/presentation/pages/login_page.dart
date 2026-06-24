@@ -118,7 +118,6 @@ class LoginPage extends StatelessWidget {
                         Obx(
                           () => SizedBox(
                             width: double.infinity,
-                            height: 50,
                             child: ElevatedButton(
                               onPressed: controller.isLoading.value
                                   ? null
@@ -130,14 +129,19 @@ class LoginPage extends StatelessWidget {
                                         );
                                       }
                                     },
-                              style: ElevatedButton.styleFrom(),
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: const Size.fromHeight(50),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                              ),
                               child: controller.isLoading.value
                                   ? const CircularProgressIndicator(
                                       color: AppColors.white,
                                     )
                                   : const Text(
                                       'Login',
-                                      //textAlign: TextAlign.center,
+                                      textAlign: TextAlign.center,
                                     ),
                             ),
                           ),
@@ -178,22 +182,14 @@ class LoginPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SocialButton(
                         icon: Icons.g_mobiledata, // Placeholder
                         label: 'Google',
                         onTap: () => controller.loginWithGoogle(),
-                        color: AppColors
-                            .lightContainer, // Or brand color background
-                        textColor: AppColors.google, // Brand color text
-                      ),
-                      SocialButton(
-                        icon: Icons.facebook,
-                        label: 'Facebook',
-                        onTap: () => controller.loginWithFacebook(),
                         color: AppColors.lightContainer,
-                        textColor: AppColors.facebook,
+                        textColor: AppColors.google,
                       ),
                     ],
                   ),

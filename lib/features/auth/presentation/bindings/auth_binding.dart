@@ -4,7 +4,6 @@ import '../../data/datasources/auth_remote_data_source_impl.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/login_with_email_usecase.dart';
-import '../../domain/usecases/login_with_facebook_usecase.dart';
 import '../../domain/usecases/login_with_google_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 import '../controllers/auth_controller.dart';
@@ -37,7 +36,6 @@ class AuthBinding extends Bindings {
     Get.lazyPut(() => LoginWithEmailUseCase(Get.find<AuthRepository>()));
     Get.lazyPut(() => RegisterUseCase(Get.find<AuthRepository>()));
     Get.lazyPut(() => LoginWithGoogleUseCase(Get.find<AuthRepository>()));
-    Get.lazyPut(() => LoginWithFacebookUseCase(Get.find<AuthRepository>()));
 
     // Controller
     Get.lazyPut(
@@ -45,7 +43,6 @@ class AuthBinding extends Bindings {
         loginWithEmailUseCase: Get.find(),
         registerUseCase: Get.find(),
         loginWithGoogleUseCase: Get.find(),
-        loginWithFacebookUseCase: Get.find(),
       ),
     );
   }

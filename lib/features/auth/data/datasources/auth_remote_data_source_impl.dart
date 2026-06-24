@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../models/user_model.dart';
 import 'auth_remote_data_source.dart';
@@ -51,13 +52,34 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<UserModel> loginWithFacebook() async {
-    // Implement Facebook login if needed using flutter_facebook_auth
-    throw AuthException("Facebook Login not implemented yet");
+    throw AuthException('Facebook login is currently disabled');
   }
 
   @override
   Future<UserModel> loginWithGoogle() async {
-    // Implement Google login if needed using google_sign_in
-    throw AuthException("Google Login not implemented yet");
+    try {
+      final googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        throw AuthException('Google sign in cancelled');
+      }
+
+      final googleAuth = await googleUser.authentication;
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        throw AuthException('Google authentication failed');
+      }
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential = await firebaseAuth.signInWithCredential(
+        credential,
+      );
+      return _toUserModel(userCredential.user!);
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw ServerException(e.toString());
+    }
   }
 }
